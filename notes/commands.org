@@ -1,0 +1,13 @@
+:CMD: streetname
+:RUN: echo "Bahnhof 12"
+:EXPECT: Bahnhof 12
+
+:CMD: build-house
+:RUN: echo "2 5 Bahnhof 12"
+:EXPECT: 2 5 Bahnhof 12
+:DEPS: streetname
+
+:CMD: bad-house
+:RUN: echo "2 5 Bahnhof x"
+:EXPECT: 2 5 Bahnhof 12
+:DEPS: build-house

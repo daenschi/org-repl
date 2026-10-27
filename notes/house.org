@@ -1,0 +1,23 @@
+* streetname
+  :PROPERTIES:
+  :TYPE: streetname
+  :TERM: ["Bahnhof", "12"]
+  :END:
+
+* house
+  :PROPERTIES:
+  :TYPE: house
+  :TERM: ["2", "5", ["Bahnhof", "12"]]
+  :END:
+
+* streetname type (defined before house uses it)
+  :PROPERTIES:
+  :TYPE: type
+  :FIELDS: word:characters number:wholenumbers
+  :END:
+
+* house type
+  :PROPERTIES:
+  :TYPE: type
+  :FIELDS: doors:wholenumbers windows:wholenumbers address:streetname
+  :END:
