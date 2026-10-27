@@ -139,5 +139,31 @@ refused there), terms to /eval. Verdicts land as messages."
       (add-hook 'before-save-hook #'org-repl-before-save nil t)
     (remove-hook 'before-save-hook #'org-repl-before-save t)))
 
+;;; --- the buttons: one menu for everything ---------------------------------------
+;;;
+;;; C-c r opens the menu. t = new type, m = new term, c = new command,
+;;; v = validate buffer. These are buttons, not magic: the same functions
+;;; you can call by name.
+
+(require 'transient)
+
+;;;###autoload
+(transient-define-prefix org-repl-menu ()
+  "The org-repl buttons."
+  ["Create"
+   [("t" "new type (forced fields)" org-repl-capture-type)
+    ("m" "new term of a type" org-repl-capture-term)
+    ("c" "new command (RUN/EXPECT)" org-repl-capture-command)]
+   ["Check"
+    [("v" "validate buffer" org-repl-validate-buffer)]])
+
+;;;###autoload
+(defun org-repl-buttons ()
+  "Open the org-repl menu."
+  (interactive)
+  (org-repl-menu))
+
+(global-set-key (kbd "C-c r") #'org-repl-menu)
+
 (provide 'org-repl)
 ;;; org-repl.el ends here

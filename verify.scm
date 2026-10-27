@@ -1,6 +1,6 @@
 ;;; verify.scm — acceptance checks. From the repo root:
 ;;;   GUILE_LOAD_PATH=scm guile-3.0 -s verify.scm
-(use-modules (term types))
+(use-modules (term types) (term dictionary))
 
 (define fails 0)
 (define (check name ok?)
@@ -49,6 +49,15 @@
          (lambda ()
            (define-type! "house" '(("address" . "house")) #f))
          (lambda (k . a) #t)))
+
+;;; --- dictionary references (shared source, no duplicates) ------------------------
+(load-dictionary! "types/dictionary.tsv")
+(check "german reference resolves an existing entry"
+       (null? (validate-value "german" "Bahnhof" '())))
+(check "german reference rejects a non-entry"
+       (pair? (validate-value "german" "NoSuchWord" '())))
+(check "english reference resolves an existing entry"
+       (null? (validate-value "english" "station" '())))
 
 ;;; --- the house example from the user --------------------------------------------
 (define-type! "house"
