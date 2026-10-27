@@ -35,6 +35,30 @@ evaluates types; elisp never runs commands.
   time. No forward references, no self reference — the type graph is a DAG,
   and journal order is dependency order.
 
+## The dictionary: references, not copies
+
+`types/dictionary.tsv` is the single source of truth (dict.cc format:
+German<TAB>English). Two reference types exist beside the primitives:
+
+- `german` — valid iff the word is a German entry in the dictionary
+- `english` — valid iff the word is an English entry
+
+`streetname` = `word:german` + `number:wholenumbers`. A streetname term
+`["Bahnhof", "12"]` is a *reference* to the dictionary entry, not a copy
+of it. Change the entry once, every term that references it sees the new
+value. Unknown words are refused at eval time: `expected german, got x`.
+
+## The buttons
+
+`C-c r` opens the transient menu (Emacs ≥ 28, `transient` is built in):
+
+- `t` — new type (forced fields)
+- `m` — new term of a type
+- `c` — new command (RUN/EXPECT)
+- `v` — validate buffer
+
+Same functions as the `M-x org-repl-capture-*` commands, just one key away.
+
 ## Run it
 
 ```sh
@@ -84,6 +108,7 @@ FAIL bad-house
 ;; in the emacs container or your own Emacs:
 (load-file "/opt/org-repl.el")     ; or the repo path
 (org-repl-mode)
+;; C-c r                          → the buttons menu
 ;; M-x org-repl-capture-type      → forced type skeleton
 ;; M-x org-repl-capture-term      → forced term skeleton
 ;; M-x org-repl-capture-command   → forced command skeleton
@@ -93,9 +118,11 @@ FAIL bad-house
 ## Files
 
 - `scm/term/types.scm` — the semantics, pure, commented
+- `scm/term/dictionary.scm` — the shared dictionary (entries, not copies)
 - `scm/term/server.scm` — HTTP shell (owns all I/O)
 - `types/bootstrap.scm` — seed vocabulary in dependency order
+- `types/dictionary.tsv` — the shared dictionary (dict.cc format)
 - `verify.scm` — 20 acceptance checks (`docker compose run --rm repl guile-3.0 -s verify.scm`)
-- `emacs/org-repl.el` — forced skeletons + before-save validation
+- `emacs/org-repl.el` — forced skeletons + before-save validation + buttons
 - `bb/tasks.clj` — the command runner (dependency order + EXPECT)
 - `notes/` — example org files (a good house, a bad command)
