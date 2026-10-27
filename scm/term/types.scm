@@ -17,6 +17,7 @@
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-13)
   #:use-module (srfi srfi-14)
+  #:use-module (term dictionary)
   #:export (define-type! validate-term render-term resolve-type
             validate-value all-types reset-registry!))
 
@@ -50,10 +51,14 @@
         s)))
 
 ;;; The base registry entries: (name . base-predicate).
+;;; german/english are dictionary REFERENCE types: valid = the entry exists
+;;; in the shared dictionary (see term/dictionary.scm), not free text.
 (define (base-predicate name)
   (cond ((equal? name "characters")    characters?)
         ((equal? name "wholenumbers")  wholenumber?)
         ((equal? name "symbols")       symbols?)
+        ((equal? name "german")  (lambda (s) (dictionary-entry? "german" s)))
+        ((equal? name "english") (lambda (s) (dictionary-entry? "english" s)))
         (else #f)))
 
 ;;; --- the registry: which types exist, in definition order --------------------
