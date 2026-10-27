@@ -1,0 +1,28 @@
+services:
+  # The evaluator: types as data, term validation, one-direction composition.
+  repl:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./types:/app/types
+      - ./scm:/app/scm
+    restart: unless-stopped
+
+  # Headless Emacs: org-capture skeletons + before-save validation.
+  emacs:
+    build:
+      context: .
+      dockerfile: Dockerfile.emacs
+    volumes:
+      - ./notes:/notes
+    restart: "no"
+
+  # Babashka: runs :CMD: blocks in dependency order, checks EXPECT.
+  bb:
+    image: babashka/babashka:latest
+    volumes:
+      - ./bb:/work/bb
+      - ./notes:/work/notes
+    working_dir: /work
+    restart: "no"
